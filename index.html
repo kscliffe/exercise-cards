@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dave's Exercise Cards</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+
+        #card-container {
+            width: 320px;
+            height: 450px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 4px solid #e2e8f0;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        #exercise-image {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none; /* Hidden until a card is drawn */
+        }
+
+        #exercise-text {
+            font-size: 26px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        /* Added a container so buttons sit side-by-side */
+        #button-container {
+            display: flex;
+            gap: 15px; 
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: #4299e1;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(66, 153, 225, 0.4);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #3182ce;
+        }
+        
+        button:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(66, 153, 225, 0.4);
+        }
+
+        /* Styles specifically for the back button */
+        #back-btn {
+            background-color: #a0aec0;
+        }
+
+        #back-btn:hover:not(:disabled) {
+            background-color: #718096;
+        }
+
+        /* Style for when the back button is disabled */
+        button:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="card-container">
+        <img id="exercise-image" src="" alt="Exercise Image">
+        <div id="exercise-text">Press the button to start!</div>
+    </div>
+
+    <div id="button-container">
+        <button id="back-btn" onclick="goBack()" disabled>Back</button>
+        <button onclick="drawCard()">Draw Next Exercise</button>
+    </div>
+
+    <script>
+        const exercises = [
+            { name: "10x Star Jumps", image: "star-jumps.jpg" },
+            { name: "Bear Walks", image: "bear-walks.jpg" },
+            { name: "Spider Walks", image: "spider-walks.jpg" },
+            { name: "Wheelbarrow Walks", image: "wheelbarrow-walks.jpg" },
+            { name: "3x Forward Roll", image: "forward-roll.jpg" },
+            { name: "3x Backwards Roll", image: "backwards-roll.jpg" },
+            { name: "5x Frog Jumps", image: "frog-jumps.jpg" },
+            { name: "Wheelbarrow Walks", image: "wheelbarrow-walks.jpg" },
+            { name: "Belly Crawl", image: "belly-crawl.jpg" },
+            { name: "Duck Walks", image: "duck-walks.jpg" },
+            { name: "Balance on 1 Foot for 5 Seconds", image: "balance.jpg" },
+            { name: "20x Star Jumps", image: "star-jumps.jpg" },
+            { name: "5x Forward Roll", image: "forward-roll.jpg" },
+            { name: "5x Backwards Roll", image: "backwards-roll.jpg" },
+            { name: "10x Passes", image: "passes.jpg" },
+            { name: "25x Passes", image: "passes.jpg" },
+            { name: "Balance on 1 Foot for 10 Seconds", image: "balance.jpg" },
+            { name: "10x Frog Jumps", image: "frog-jumps.jpg" },
+            { name: "10 second Handstand", image: "handstand.jpg" },
+            { name: "10x backwards falls", image: "backwards-fall.jpg" },
+            { name: "Backward Shark crawls", image: "backwards-crocodile-crawls.jpg" },
+            { name: "Forward Shark crawls", image: "forwards-crocodile-crawls.jpg" },
+            { name: "10 second Handstand", image: "handstand-facing-wall.jpg" },
+            { name: "10 Shark jumps", image: "shark-jumps.jpg" },
+            { name: "10 Feet Switches", image: "switch-feet.jpg" },
+            { name: "10 Hand opppsite Knee crunch", image: "hand-opposite-knee-crunch.jpg" }
+        ];
+
+        // History tracking variables
+        let cardHistory = [];
+        let currentIndex = -1;
+
+        function drawCard() {
+            // Pick a random index
+            const randomIndex = Math.floor(Math.random() * exercises.length);
+            
+            // If the user went backwards and then draws a new card, remove the forward history
+            if (currentIndex < cardHistory.length - 1) {
+                cardHistory = cardHistory.slice(0, currentIndex + 1);
+            }
+            
+            // Add the new card to history and move our index forward
+            cardHistory.push(randomIndex);
+            currentIndex++;
+            
+            displayCard(cardHistory[currentIndex]);
+        }
+
+        function goBack() {
+            // Only go back if we aren't at the very first card
+            if (currentIndex > 0) {
+                currentIndex--;
+                displayCard(cardHistory[currentIndex]);
+            }
+        }
+
+        function displayCard(index) {
+            const selectedExercise = exercises[index];
+            
+            // Update the text
+            document.getElementById('exercise-text').innerText = selectedExercise.name;
+            
+            // Update and show the image
+            const imgElement = document.getElementById('exercise-image');
+            imgElement.src = selectedExercise.image;
+            imgElement.alt = selectedExercise.name;
+            imgElement.style.display = 'block'; 
+            
+            // Enable or disable the back button depending on where we are in history
+            const backBtn = document.getElementById('back-btn');
+            if (currentIndex > 0) {
+                backBtn.disabled = false;
+            } else {
+                backBtn.disabled = true;
+            }
+            
+            // Pop animation
+            const cardElement = document.getElementById('card-container');
+            cardElement.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                cardElement.style.transform = 'scale(1)';
+            }, 150);
+        }
+    </script>
+</body>
+</html>
